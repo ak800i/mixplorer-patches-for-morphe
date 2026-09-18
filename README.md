@@ -4,7 +4,7 @@ A Morphe patch bundle that fixes the reproduced multi-file sharing failure by re
 
 This independent project is not affiliated with MiXplorer or Morphe. No modified MiXplorer APK is distributed.
 
-**Stable support is in source version 0.2.0.** The published 0.1.0 bundle is beta-only. To patch stable MiXplorer now, [build from source](#build-from-source) and import the resulting `patches-0.2.0.mpp` locally. The source manifest remains on 0.1.0 until a new bundle is published.
+Use release **0.2.0** for stable and beta MiXplorer.
 
 ## Add to Morphe
 
@@ -40,7 +40,7 @@ Use [Morphe Desktop 1.16.0](https://github.com/MorpheApp/morphe-desktop/releases
 
 1. Enable **Settings > Advanced > Expert mode**.
 2. Select one of the original APKs listed above.
-3. For stable, use **Local patch file > Browse** and select the source-built `patches-0.2.0.mpp`. Beta also works with the published source linked above.
+3. Add this repository as a source, or use **Local patch file > Browse** and select the downloaded `.mpp`.
 4. Enable **Fix Telegram multi-file sharing** and apply it. Its necessary local-signing support is included automatically.
 5. Install the APK produced by Morphe. No root or additional receiving-app storage permission is needed.
 
@@ -49,7 +49,7 @@ Use [Morphe Desktop 1.16.0](https://github.com/MorpheApp/morphe-desktop/releases
 CLI equivalent, from a folder containing the three named input files:
 
 ```powershell
-java -jar .\morphe-desktop-1.16.0-all.jar patch .\MiXplorer_v6.71.15_B26090422-arm64.apk -p .\patches-0.2.0.mpp --exclusive -e "Fix Telegram multi-file sharing" -o .\MiXplorer-patched.apk
+java -jar .\morphe-desktop-1.16.0-all.jar patch .\MiXplorer_v6.71.15_B26090422-arm64.apk -p .\MiXplorer-Sharing-Fix-0.2.0.mpp --exclusive -e "Fix Telegram multi-file sharing" -o .\MiXplorer-patched.apk
 ```
 
 The source manifest advertises the released patch bundle. It does not expand compatibility beyond the supported input listed above.
@@ -64,7 +64,7 @@ Only two existing classes are modified. No extension library, new permissions, r
 ## Verification
 
 - Eight Kotlin/dex tests pass, covering exact stable/beta compatibility, high-numbered registers, original branches, missing/ambiguous matches, and repeat-application rejection.
-- Official Morphe applies source bundle 0.2.0 to both exact APKs in default `STRIP_FAST` mode without compatibility overrides and signs the results.
+- Official Morphe applies bundle 0.2.0 to both exact APKs in default `STRIP_FAST` mode without compatibility overrides and signs the results.
 - The patched stable app starts and browses normally. Its native single-file share preserves the filename, size, MIME type, read grant, and exact payload hash.
 - [Stable native two-file capture](evidence/patched-two-files.json): default and explicit `_data` are null, both URI grants work, and both ordinary Telegram-style multi-file reads match the original SHA-256 hashes without using the diagnostic metadata adapter or receiver storage permission.
 - [Stable same-UID instrumentation results](evidence/internal-query.txt): both fixtures retain MiXplorer's own `_data` and `path` values, and raw-path and URI payloads match. Test source is in [device-tests/InternalQueryTest.java](device-tests/InternalQueryTest.java).
