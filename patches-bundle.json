@@ -1,0 +1,7 @@
+{
+  "created_at": "2026-09-18T18:08:43Z",
+  "description": "MiXplorer Sharing Fix 0.1.0. Fixes unreadable _data paths for external file-sharing recipients and includes the local-signing support needed by the free beta. Supports com.mixplorer.beta 6.71.15-BETA, ARM64 build 26090412 only. Tested on-device with a diagnostic receiver; live Telegram uploads are not yet verified. Back up settings before replacing an officially signed beta.",
+  "download_url": "https://github.com/ak800i/mixplorer-patches-for-morphe/releases/download/v0.1.0/MiXplorer-Sharing-Fix-0.1.0.mpp",
+  "signature_download_url": "",
+  "version": "0.1.0"
+}

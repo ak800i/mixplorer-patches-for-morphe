@@ -1,0 +1,6 @@
+[versions]
+morphe-patcher = "1.13.0"
+smali = "d92701d947"
+
+[libraries]
+morphe-patcher = { module = "app.morphe:morphe-patcher", version.ref = "morphe-patcher" }
