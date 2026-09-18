@@ -1,6 +1,7 @@
 package dev.local.mixplorer
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
+import app.morphe.patcher.patch.SupportedAbi
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass.Companion.toMutable
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
@@ -21,6 +22,19 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class SharingFixPatchTest {
+    @Test
+    fun `supports stable MiXplorer and retains the verified beta target`() {
+        val supported = fixTelegramMultiFileSharingPatch.compatibility.orEmpty().associateBy { it.packageName }
+        assertEquals(setOf("com.mixplorer", "com.mixplorer.beta"), supported.keys)
+        val stable = supported.getValue("com.mixplorer").targets.single()
+        assertEquals("6.71.15", stable.version)
+        assertEquals(mapOf(SupportedAbi.ARM64_V8A to 26090422), stable.versionCodes)
+        assertEquals(30, stable.minSdk)
+        val beta = supported.getValue("com.mixplorer.beta").targets.single()
+        assertEquals("6.71.15-BETA", beta.version)
+        assertEquals(mapOf(SupportedAbi.ARM64_V8A to 26090412), beta.versionCodes)
+    }
+
     private val queryTypes = listOf(
         "Landroid/net/Uri;", "[Ljava/lang/String;", "Ljava/lang/String;",
         "[Ljava/lang/String;", "Ljava/lang/String;",

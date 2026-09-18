@@ -11,10 +11,10 @@ import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
-internal val localBetaSigningPatch = bytecodePatch {
+internal val localSigningPatch = bytecodePatch {
     execute {
         val owner = classDefByStrings("Unknown Fingerprint!").singleOrNull()
-            ?: error("Expected exactly one beta self-signature helper.")
+            ?: error("Expected exactly one MiXplorer self-signature helper.")
         patchLocalSigning(mutableClassDefBy(owner))
     }
 }
@@ -27,11 +27,11 @@ internal fun patchLocalSigning(owner: MutableClass) {
         }.orEmpty()
         candidate.parameterTypes.isEmpty() && candidate.returnType == "Ljava/lang/String;" &&
             candidate.accessFlags and AccessFlags.STATIC.value != 0 && strings.containsAll(markers)
-    } ?: error("Unsupported beta self-fingerprint method.")
+    } ?: error("Unsupported MiXplorer self-fingerprint method.")
     val instructions = method.implementation!!.instructions.toList()
     val firstAllowed = instructions.indices.filter {
         ((instructions[it] as? ReferenceInstruction)?.reference as? StringReference)?.string == "87ed1907"
-    }.singleOrNull() ?: error("Ambiguous beta signature whitelist.")
+    }.singleOrNull() ?: error("Ambiguous MiXplorer signature whitelist.")
     check(firstAllowed >= 2 && firstAllowed + 1 < instructions.size) { "Incomplete signature whitelist." }
     check(instructions[firstAllowed - 2].opcode == Opcode.SPUT_OBJECT &&
         instructions[firstAllowed - 1].opcode == Opcode.SGET_OBJECT &&
@@ -50,7 +50,7 @@ internal fun patchLocalSigning(owner: MutableClass) {
         add.registerCount == 2 && add.registerC == listRegister && add.registerD == valueRegister &&
         (instructions[firstAllowed + 1] as ReferenceInstruction).reference.toString() ==
         "Ljava/util/List;->add(Ljava/lang/Object;)Z"
-    ) { "Unsupported beta self-fingerprint operands." }
+    ) { "Unsupported MiXplorer self-fingerprint operands." }
     method.addInstructions(
         firstAllowed,
         """

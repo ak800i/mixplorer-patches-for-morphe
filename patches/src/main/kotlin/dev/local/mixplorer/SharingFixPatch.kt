@@ -31,8 +31,19 @@ val fixTelegramMultiFileSharingPatch = bytecodePatch(
     name = "Fix Telegram multi-file sharing",
     description = "Hides unreadable _data filesystem paths from external apps while preserving content URI access and same-app queries.",
 ) {
-    dependsOn(localBetaSigningPatch)
+    dependsOn(localSigningPatch)
     compatibleWith(
+        Compatibility(
+            packageName = "com.mixplorer",
+            name = "MiXplorer",
+            targets = listOf(
+                AppTarget(
+                    version = "6.71.15",
+                    versionCodes = mapOf(SupportedAbi.ARM64_V8A to 26090422),
+                    minSdk = 30,
+                ),
+            ),
+        ),
         Compatibility(
             packageName = "com.mixplorer.beta",
             name = "MiXplorer Beta",
