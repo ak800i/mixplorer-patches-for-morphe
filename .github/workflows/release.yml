@@ -45,7 +45,9 @@ jobs:
       - name: Test patches
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew :patches:test --no-daemon
+        run: |
+          ./gradlew :patches:test --no-daemon
+          python3 .github/scripts/test_generate_patches_readme.py
 
       # Semantic release runs its own Gradle build command.
       # Only dev and main branch will generate a release as specified by .releaserc

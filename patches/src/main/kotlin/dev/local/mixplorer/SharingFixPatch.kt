@@ -4,7 +4,6 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLa
 import app.morphe.patcher.extensions.InstructionExtensions.removeInstruction
 import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
-import app.morphe.patcher.patch.SupportedAbi
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
@@ -38,8 +37,7 @@ val fixScopedStorageFileSharingPatch = bytecodePatch(
             name = "MiXplorer",
             targets = listOf(
                 AppTarget(
-                    version = "6.71.15",
-                    versionCodes = mapOf(SupportedAbi.ARM64_V8A to 26090422),
+                    version = null,
                     minSdk = 30,
                 ),
             ),
@@ -49,8 +47,7 @@ val fixScopedStorageFileSharingPatch = bytecodePatch(
             name = "MiXplorer Beta",
             targets = listOf(
                 AppTarget(
-                    version = "6.71.15-BETA",
-                    versionCodes = mapOf(SupportedAbi.ARM64_V8A to 26090412),
+                    version = null,
                     minSdk = 30,
                 ),
             ),

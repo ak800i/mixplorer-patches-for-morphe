@@ -25,14 +25,14 @@ The generated [patch catalogue](patches-list.json) describes the bundle's patche
 ## Patches
 
 <!-- PATCHES_START -->
-> **[v0.2.2](https://github.com/ak800i/mixplorer-patches-for-morphe/releases/tag/v0.2.2)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;1 patch total
+> **[v0.2.3-dev.1](https://github.com/ak800i/mixplorer-patches-for-morphe/releases/tag/v0.2.3-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;1 patch total
 <details open>
 <summary>📦 MiXplorer&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
 
 **🎯 Supported versions:**
 
-| 6.71.15 |
+| Any version |
 | :---: |
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
@@ -47,7 +47,7 @@ The generated [patch catalogue](patches-list.json) describes the bundle's patche
 
 **🎯 Supported versions:**
 
-| 6.71.15-BETA |
+| Any version |
 | :---: |
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
@@ -58,9 +58,13 @@ The generated [patch catalogue](patches-list.json) describes the bundle's patche
 
 <!-- PATCHES_END -->
 
-## Supported input
+## Compatibility and tested input
 
-| Edition | Package | Version | ARM64 build |
+The patch is offered for any version, build code, and architecture of the free stable (`com.mixplorer`) and beta (`com.mixplorer.beta`) packages on Android 11 or later. It keeps strict structural guards: if an unknown release changes the provider or signing-check layout, patching stops before those methods are modified.
+
+Device testing is limited to these inputs:
+
+| Edition | Package | Tested version | Tested ARM64 build |
 | --- | --- | --- | --- |
 | Stable (primary) | `com.mixplorer` | **6.71.15** | **26090422** |
 | Beta | `com.mixplorer.beta` | **6.71.15-BETA** | **26090412** |
@@ -70,7 +74,7 @@ Android 11+; tested on Galaxy A71, Android 13 / One UI 5.1.
 - Stable: `MiXplorer_v6.71.15_B26090422-arm64.apk` from the [official download folder](https://drive.google.com/drive/folders/1Rj8kOmcZwXkWhjQI48wBd21v7yG73x7D). SHA-256: `bc2627659872cfc9895155d129c03eb8ac2b3c112cbdbe7303feb718f10c83f0`.
 - Beta: [official input APK](https://mixplorer.com/beta/MiXplorer_v6.71.15-BETA_B26090412-arm64.apk). SHA-256: `62b0f397ee751e90b5b0f619004dff2c39ba466a5fe5d2f8ae1a23413cf8ff98`.
 
-Silver, other builds (including the universal APK), and other architectures are not supported. Do not force compatibility or continue after a patch failure. Missing, ambiguous, or previously patched bytecode patterns are rejected.
+Silver and other package IDs are not supported. Other versions, builds (including the universal APK), and architectures of the two listed packages are advertised but have not been device-tested. Do not continue after a patch failure; missing, ambiguous, changed, or previously patched bytecode patterns are rejected.
 
 ## Apply with Morphe Desktop
 
@@ -90,21 +94,21 @@ CLI example, from a folder containing Morphe Desktop and the original APK (downl
 java -jar .\morphe-desktop-1.16.0-all.jar patch .\MiXplorer_v6.71.15_B26090422-arm64.apk -p https://github.com/ak800i/mixplorer-patches-for-morphe --exclusive -e "Fix scoped-storage file sharing" -o .\MiXplorer-patched.apk
 ```
 
-The source manifest advertises the released patch bundle. It does not expand compatibility beyond the supported input listed above.
+The source manifest advertises the released patch bundle. The bundle's compatibility metadata offers the patch for any version of the two package IDs listed above on Android 11 or later.
 
 ## What changes
 
 ### Fix scoped-storage file sharing
 
 - **Provider fix:** A small UID check is inserted into `FileProvider.query()`'s `_data` branch. Different UID: store a null value and follow the original column continuation. Same UID: follow the original path branch. Explicit `_data` projections are covered, and the separate `path` alias is untouched.
-- **Required signing support:** Both supported APKs contain the same guarded self-fingerprint helper, which calculates the signing certificate's CRC-32 and checks an allowed list. An unchanged, re-signed beta was verified to exit at startup. The internal dependency adds the actual installed app's fingerprint to the existing list. It does not fabricate a developer signature or change Android's signature verification. Only the free stable and beta editions are targeted.
+- **Required signing support:** Both device-tested APKs contain the same guarded self-fingerprint helper, which calculates the signing certificate's CRC-32 and checks an allowed list. An unchanged, re-signed beta was verified to exit at startup. The internal dependency adds the actual installed app's fingerprint to the existing list. It does not fabricate a developer signature or change Android's signature verification. Only the free stable and beta package IDs are targeted.
 
 Only two existing classes are modified. No extension library, new permissions, resource changes, UI changes, or receiving-app modifications are injected. Recipients that already read content URIs do not need this workaround; other recipients benefit only if they fall back to URI access when `_data` is absent.
 
 ## Verification
 
-- Nine Kotlin/dex tests pass, covering recipient-independent naming, exact stable/beta compatibility, high-numbered registers, original branches, missing/ambiguous matches, and repeat-application rejection.
-- Official Morphe applies bundle 0.2.0 to both exact APKs in default `STRIP_FAST` mode without compatibility overrides and signs the results.
+- Nine Kotlin/dex tests pass, covering recipient-independent naming, package-scoped any-version compatibility, high-numbered registers, original branches, missing/ambiguous matches, and repeat-application rejection.
+- Official Morphe applies bundle 0.2.0 to both device-tested APKs in default `STRIP_FAST` mode without compatibility overrides and signs the results.
 - The patched stable app starts and browses normally. Its native single-file share preserves the filename, size, MIME type, read grant, and exact payload hash.
 - [Stable native two-file capture](evidence/patched-two-files.json): default and explicit `_data` are null, both URI grants work, and both modeled multi-file reads match the original SHA-256 hashes without using the diagnostic metadata adapter or receiver storage permission.
 - [Stable same-UID instrumentation results](evidence/internal-query.txt): both fixtures retain MiXplorer's own `_data` and `path` values, and raw-path and URI payloads match. Test source is in [device-tests/InternalQueryTest.java](device-tests/InternalQueryTest.java).
@@ -114,7 +118,7 @@ Public evidence uses disposable synthetic files. Device-local UID numbers have b
 
 **Motivating case:** Telegram 12.10.3 multi-file uploads exposed the raw-path failure. The diagnostic receiver models that application's file-reading behavior at source commit `9552e5541e1274b9557c9832b204dbfcaf44b3dc`; it is not a universal model of every receiving app.
 
-**Limit:** This validates the actual patched MiXplorer provider, not a live receiving-app UI/network upload. No account-based upload was tested. Broader MiXplorer features and cross-app compatibility have not been exhaustively tested. The recipient-independent name describes the existing behavior, not an expansion of the tested scope.
+**Limit:** This validates the actual patched MiXplorer provider in the two listed APKs, not every historical or future MiXplorer layout and not a live receiving-app UI/network upload. No account-based upload was tested. Broader MiXplorer features and cross-app compatibility have not been exhaustively tested. Any-version metadata broadens patch selection; it does not expand the device-tested scope.
 
 ## Build from source
 

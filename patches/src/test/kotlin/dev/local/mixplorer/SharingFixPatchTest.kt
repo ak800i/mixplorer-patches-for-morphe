@@ -1,7 +1,6 @@
 package dev.local.mixplorer
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
-import app.morphe.patcher.patch.SupportedAbi
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass.Companion.toMutable
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
@@ -19,6 +18,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class SharingFixPatchTest {
@@ -28,16 +28,17 @@ class SharingFixPatchTest {
     }
 
     @Test
-    fun `supports stable MiXplorer and retains the verified beta target`() {
-        val supported = fixScopedStorageFileSharingPatch.compatibility.orEmpty().associateBy { it.packageName }
+    fun `supports any stable and beta MiXplorer version on Android 11 or later`() {
+        val compatibility = fixScopedStorageFileSharingPatch.compatibility.orEmpty()
+        assertEquals(2, compatibility.size)
+        val supported = compatibility.associateBy { it.packageName }
         assertEquals(setOf("com.mixplorer", "com.mixplorer.beta"), supported.keys)
-        val stable = supported.getValue("com.mixplorer").targets.single()
-        assertEquals("6.71.15", stable.version)
-        assertEquals(mapOf(SupportedAbi.ARM64_V8A to 26090422), stable.versionCodes)
-        assertEquals(30, stable.minSdk)
-        val beta = supported.getValue("com.mixplorer.beta").targets.single()
-        assertEquals("6.71.15-BETA", beta.version)
-        assertEquals(mapOf(SupportedAbi.ARM64_V8A to 26090412), beta.versionCodes)
+        supported.values.forEach { compatibility ->
+            val target = compatibility.targets.single()
+            assertNull(target.version)
+            assertNull(target.versionCodes)
+            assertEquals(30, target.minSdk)
+        }
     }
 
     private val queryTypes = listOf(
