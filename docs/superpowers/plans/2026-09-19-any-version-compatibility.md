@@ -280,12 +280,28 @@ Expected: both package targets pass the assertions and the working tree is clean
 - [ ] **Step 3: Push `dev` and verify the prerelease workflow**
 
 ```powershell
+$implementationHead = (git rev-parse HEAD).Trim()
 git push origin dev
-$head = git rev-parse HEAD
-$run = gh run list --workflow Release --branch dev --limit 1 --json databaseId,status,conclusion,headSha | ConvertFrom-Json | Select-Object -First 1
-if ($run.headSha -ne $head) { throw 'Latest release run does not match pushed HEAD' }
+$runs = @(gh run list --workflow Release --branch dev --commit $implementationHead --limit 1 --json databaseId,status,conclusion,headSha | ConvertFrom-Json)
+if ($runs.Count -ne 1 -or $runs[0].headSha -ne $implementationHead) {
+    throw 'Expected one release run for the pushed implementation commit'
+}
+$run = $runs[0]
 gh run watch $run.databaseId --exit-status --compact *> .git/dev-release-run.log
-gh run view $run.databaseId --json status,conclusion,jobs
+$result = gh run view $run.databaseId --json status,conclusion,jobs | ConvertFrom-Json
+if ($result.status -ne 'completed' -or $result.conclusion -ne 'success') { throw 'Prerelease workflow failed' }
+git fetch origin dev --tags
+$prereleaseHead = (git rev-parse origin/dev).Trim()
+$tagHead = (git rev-parse 'v0.2.3-dev.1^{commit}').Trim()
+$releaseParent = (git show -s --format=%P $prereleaseHead).Trim()
+if ($tagHead -ne $prereleaseHead) { throw 'Prerelease tag does not identify origin/dev' }
+if ($releaseParent -ne $implementationHead) { throw 'Prerelease commit is not the direct child of the tested implementation' }
+$repo = gh repo view --json nameWithOwner --jq .nameWithOwner
+$prerelease = gh api "repos/$repo/releases/tags/v0.2.3-dev.1" | ConvertFrom-Json
+$mppAssets = @($prerelease.assets | Where-Object name -Like '*.mpp')
+if (-not $prerelease.prerelease -or $prerelease.draft -or $mppAssets.Count -ne 1) {
+    throw 'Unexpected prerelease or MPP asset count'
+}
 ```
 
 Expected: success and release `v0.2.3-dev.1` with exactly one non-source `.mpp` asset.
@@ -299,8 +315,8 @@ $prs = @(gh pr list --base main --head dev --state open --json number,baseRefNam
 if ($prs.Count -ne 1 -or $prs[0].baseRefName -ne 'main' -or $prs[0].headRefName -ne 'dev') {
     throw 'Expected exactly one dev to main promotion PR'
 }
-if ($prs[0].headRefOid -ne $head) { throw 'Promotion PR head differs from verified prerelease commit' }
-gh pr merge $prs[0].number --merge --match-head-commit $head
+if ($prs[0].headRefOid -ne $prereleaseHead) { throw 'Promotion PR head differs from verified prerelease commit' }
+gh pr merge $prs[0].number --merge --match-head-commit $prereleaseHead
 ```
 
 - [ ] **Step 5: Verify stable publication**
