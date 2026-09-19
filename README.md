@@ -25,7 +25,7 @@ The generated [patch catalogue](patches-list.json) describes the bundle's patche
 ## Patches
 
 <!-- PATCHES_START -->
-> **[v0.2.0](https://github.com/ak800i/mixplorer-patches-for-morphe/releases/tag/v0.2.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;1 patch total
+> **[v0.2.1-dev.1](https://github.com/ak800i/mixplorer-patches-for-morphe/releases/tag/v0.2.1-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;1 patch total
 <details open>
 <summary>📦 MiXplorer&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -37,7 +37,7 @@ The generated [patch catalogue](patches-list.json) describes the bundle's patche
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
-| [Fix Telegram multi-file sharing](#fix-telegram-multi-file-sharing) | Hides unreadable _data filesystem paths from external apps while preserving content URI access and same-app queries. |  |
+| [Fix scoped-storage file sharing](#fix-scoped-storage-file-sharing) | Hides unreadable _data filesystem paths from external apps for single-file and multi-file shares, preserving content URI access and same-app queries. |  |
 
 </details>
 
@@ -52,7 +52,7 @@ The generated [patch catalogue](patches-list.json) describes the bundle's patche
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
-| [Fix Telegram multi-file sharing](#fix-telegram-multi-file-sharing) | Hides unreadable _data filesystem paths from external apps while preserving content URI access and same-app queries. |  |
+| [Fix scoped-storage file sharing](#fix-scoped-storage-file-sharing) | Hides unreadable _data filesystem paths from external apps for single-file and multi-file shares, preserving content URI access and same-app queries. |  |
 
 </details>
 
