@@ -23,8 +23,13 @@ import kotlin.test.assertTrue
 
 class SharingFixPatchTest {
     @Test
+    fun `uses a recipient independent patch name`() {
+        assertEquals("Fix scoped-storage file sharing", fixScopedStorageFileSharingPatch.name)
+    }
+
+    @Test
     fun `supports stable MiXplorer and retains the verified beta target`() {
-        val supported = fixTelegramMultiFileSharingPatch.compatibility.orEmpty().associateBy { it.packageName }
+        val supported = fixScopedStorageFileSharingPatch.compatibility.orEmpty().associateBy { it.packageName }
         assertEquals(setOf("com.mixplorer", "com.mixplorer.beta"), supported.keys)
         val stable = supported.getValue("com.mixplorer").targets.single()
         assertEquals("6.71.15", stable.version)

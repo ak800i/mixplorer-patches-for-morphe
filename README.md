@@ -1,6 +1,6 @@
 # MiXplorer Sharing Fix
 
-A Morphe patch bundle that fixes the reproduced multi-file sharing failure by returning null for `_data` to external apps. MiXplorer's own queries, filenames, sizes, MIME types, and content URI access are preserved.
+A Morphe patch bundle that works around scoped-storage file-sharing failures by returning null for `_data` to external apps. It applies to single-file and multi-file shares without checking the receiving app's package name. MiXplorer's own queries, filenames, sizes, MIME types, and content URI access are preserved.
 
 This independent project is not affiliated with MiXplorer or Morphe. No modified MiXplorer APK is distributed.
 
@@ -25,7 +25,7 @@ The generated [patch catalogue](patches-list.json) describes the bundle's patche
 ## Patches
 
 <!-- PATCHES_START -->
-> **[v0.2.0](https://github.com/ak800i/mixplorer-patches-for-morphe/releases/tag/v0.2.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;1 patch total
+> **[v0.2.1-dev.1](https://github.com/ak800i/mixplorer-patches-for-morphe/releases/tag/v0.2.1-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;1 patch total
 <details open>
 <summary>📦 MiXplorer&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -37,7 +37,7 @@ The generated [patch catalogue](patches-list.json) describes the bundle's patche
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
-| [Fix Telegram multi-file sharing](#fix-telegram-multi-file-sharing) | Hides unreadable _data filesystem paths from external apps while preserving content URI access and same-app queries. |  |
+| [Fix scoped-storage file sharing](#fix-scoped-storage-file-sharing) | Hides unreadable _data filesystem paths from external apps for single-file and multi-file shares, preserving content URI access and same-app queries. |  |
 
 </details>
 
@@ -52,7 +52,7 @@ The generated [patch catalogue](patches-list.json) describes the bundle's patche
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
-| [Fix Telegram multi-file sharing](#fix-telegram-multi-file-sharing) | Hides unreadable _data filesystem paths from external apps while preserving content URI access and same-app queries. |  |
+| [Fix scoped-storage file sharing](#fix-scoped-storage-file-sharing) | Hides unreadable _data filesystem paths from external apps for single-file and multi-file shares, preserving content URI access and same-app queries. |  |
 
 </details>
 
@@ -79,40 +79,42 @@ Use [Morphe Desktop 1.16.0](https://github.com/MorpheApp/morphe-desktop/releases
 1. Enable **Settings > Advanced > Expert mode**.
 2. Select one of the original APKs listed above.
 3. Add this repository as a source, or use **Local patch file > Browse** and select the downloaded `.mpp`.
-4. Enable **Fix Telegram multi-file sharing** and apply it. Its necessary local-signing support is included automatically.
+4. Enable **Fix scoped-storage file sharing** and apply it. Its necessary local-signing support is included automatically.
 5. Install the APK produced by Morphe. No root or additional receiving-app storage permission is needed.
 
 **Back up before replacing an existing installation.** Export MiXplorer settings using Settings > More settings > Export, and keep anything important outside its app-private storage. Android will not install a re-signed APK over the officially signed version of the same package (`com.mixplorer` or `com.mixplorer.beta`). After verifying the backup, remove only that edition if it is already installed, install the patched APK, and restore settings. Other editions use different package names and can remain installed. Keep your Morphe signing key for subsequent patched updates; returning to the official app also requires a backup and reinstall.
 
-CLI example for release 0.2.0, from a folder containing the three named input files (later automated releases use `patches-<version>.mpp`):
+CLI example, from a folder containing Morphe Desktop and the original APK (downloads the latest stable patch bundle from this source):
 
 ```powershell
-java -jar .\morphe-desktop-1.16.0-all.jar patch .\MiXplorer_v6.71.15_B26090422-arm64.apk -p .\MiXplorer-Sharing-Fix-0.2.0.mpp --exclusive -e "Fix Telegram multi-file sharing" -o .\MiXplorer-patched.apk
+java -jar .\morphe-desktop-1.16.0-all.jar patch .\MiXplorer_v6.71.15_B26090422-arm64.apk -p https://github.com/ak800i/mixplorer-patches-for-morphe --exclusive -e "Fix scoped-storage file sharing" -o .\MiXplorer-patched.apk
 ```
 
 The source manifest advertises the released patch bundle. It does not expand compatibility beyond the supported input listed above.
 
 ## What changes
 
-### Fix Telegram multi-file sharing
+### Fix scoped-storage file sharing
 
 - **Provider fix:** A small UID check is inserted into `FileProvider.query()`'s `_data` branch. Different UID: store a null value and follow the original column continuation. Same UID: follow the original path branch. Explicit `_data` projections are covered, and the separate `path` alias is untouched.
 - **Required signing support:** Both supported APKs contain the same guarded self-fingerprint helper, which calculates the signing certificate's CRC-32 and checks an allowed list. An unchanged, re-signed beta was verified to exit at startup. The internal dependency adds the actual installed app's fingerprint to the existing list. It does not fabricate a developer signature or change Android's signature verification. Only the free stable and beta editions are targeted.
 
-Only two existing classes are modified. No extension library, new permissions, resource changes, UI changes, or Telegram modifications are injected.
+Only two existing classes are modified. No extension library, new permissions, resource changes, UI changes, or receiving-app modifications are injected. Recipients that already read content URIs do not need this workaround; other recipients benefit only if they fall back to URI access when `_data` is absent.
 
 ## Verification
 
-- Eight Kotlin/dex tests pass, covering exact stable/beta compatibility, high-numbered registers, original branches, missing/ambiguous matches, and repeat-application rejection.
+- Nine Kotlin/dex tests pass, covering recipient-independent naming, exact stable/beta compatibility, high-numbered registers, original branches, missing/ambiguous matches, and repeat-application rejection.
 - Official Morphe applies bundle 0.2.0 to both exact APKs in default `STRIP_FAST` mode without compatibility overrides and signs the results.
 - The patched stable app starts and browses normally. Its native single-file share preserves the filename, size, MIME type, read grant, and exact payload hash.
-- [Stable native two-file capture](evidence/patched-two-files.json): default and explicit `_data` are null, both URI grants work, and both ordinary Telegram-style multi-file reads match the original SHA-256 hashes without using the diagnostic metadata adapter or receiver storage permission.
+- [Stable native two-file capture](evidence/patched-two-files.json): default and explicit `_data` are null, both URI grants work, and both modeled multi-file reads match the original SHA-256 hashes without using the diagnostic metadata adapter or receiver storage permission.
 - [Stable same-UID instrumentation results](evidence/internal-query.txt): both fixtures retain MiXplorer's own `_data` and `path` values, and raw-path and URI payloads match. Test source is in [device-tests/InternalQueryTest.java](device-tests/InternalQueryTest.java).
 - Beta previously passed the same on-device checks with published bundle 0.1.0; its APK patch application was rechecked with 0.2.0.
 
-Public evidence uses disposable synthetic files. Device-local UID numbers have been removed; no phone serial, account data, private files, or signing keys are published.
+Public evidence uses disposable synthetic files. Device-local UID numbers have been removed; no phone serial, account data, private files, or signing keys are published. The capture's receiver-model field names have been normalized to `receiverSourceCommit`, `modeledSingleFileRead`, `modeledMultiFileRead`, and `modeledMultiFileReadWithoutData`; all recorded values are unchanged.
 
-**Limit:** This validates the actual patched MiXplorer provider, not a live Telegram UI/network upload. The test phone has no Telegram account. The receiver models the relevant file-reading behavior in Telegram 12.10.3. Broader MiXplorer features and cross-app compatibility have not been exhaustively tested.
+**Motivating case:** Telegram 12.10.3 multi-file uploads exposed the raw-path failure. The diagnostic receiver models that application's file-reading behavior at source commit `9552e5541e1274b9557c9832b204dbfcaf44b3dc`; it is not a universal model of every receiving app.
+
+**Limit:** This validates the actual patched MiXplorer provider, not a live receiving-app UI/network upload. No account-based upload was tested. Broader MiXplorer features and cross-app compatibility have not been exhaustively tested. The recipient-independent name describes the existing behavior, not an expansion of the tested scope.
 
 ## Build from source
 
