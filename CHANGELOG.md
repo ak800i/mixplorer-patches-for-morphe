@@ -1,3 +1,13 @@
+## [0.2.3-dev.1](https://github.com/ak800i/mixplorer-patches-for-morphe/compare/v0.2.2...v0.2.3-dev.1) (2026-09-19)
+
+### 🐛 Bug Fixes
+
+* render any-version patch targets ([bdd91a3](https://github.com/ak800i/mixplorer-patches-for-morphe/commit/bdd91a31dadc37eb2f33bc9dc8694fe3c72db42b))
+
+### 🚀 Updated App Support
+
+* support any MiXplorer version ([e1f3491](https://github.com/ak800i/mixplorer-patches-for-morphe/commit/e1f3491aa6d50bd67c4898f15696ecec0fe7574e))
+
 ## [0.2.2](https://github.com/ak800i/mixplorer-patches-for-morphe/compare/v0.2.1...v0.2.2) (2026-09-19)
 
 ### 🐛 Bug Fixes
