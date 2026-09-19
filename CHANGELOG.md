@@ -1,3 +1,9 @@
+## [0.2.1](https://github.com/ak800i/mixplorer-patches-for-morphe/compare/v0.2.0...v0.2.1) (2026-09-19)
+
+### 🐛 Bug Fixes
+
+* clarify recipient-independent scoped-storage sharing ([43e20e6](https://github.com/ak800i/mixplorer-patches-for-morphe/commit/43e20e615c33458ed8dc269f72bbc8ab743b0a0f))
+
 ## [0.2.1-dev.1](https://github.com/ak800i/mixplorer-patches-for-morphe/compare/v0.2.0...v0.2.1-dev.1) (2026-09-19)
 
 ### 🐛 Bug Fixes

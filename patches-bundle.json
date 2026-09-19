@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-19T09:00:05",
-  "description": "## [0.2.1-dev.1](https://github.com/ak800i/mixplorer-patches-for-morphe/compare/v0.2.0...v0.2.1-dev.1) (2026-09-19)\n\n### 🐛 Bug Fixes\n\n* clarify recipient-independent scoped-storage sharing ([43e20e6](https://github.com/ak800i/mixplorer-patches-for-morphe/commit/43e20e615c33458ed8dc269f72bbc8ab743b0a0f))",
-  "download_url": "https://github.com/ak800i/mixplorer-patches-for-morphe/releases/download/v0.2.1-dev.1/patches-0.2.1-dev.1.mpp",
+  "created_at": "2026-09-19T09:04:02",
+  "description": "## [0.2.1](https://github.com/ak800i/mixplorer-patches-for-morphe/compare/v0.2.0...v0.2.1) (2026-09-19)\n\n### 🐛 Bug Fixes\n\n* clarify recipient-independent scoped-storage sharing ([43e20e6](https://github.com/ak800i/mixplorer-patches-for-morphe/commit/43e20e615c33458ed8dc269f72bbc8ab743b0a0f))",
+  "download_url": "https://github.com/ak800i/mixplorer-patches-for-morphe/releases/download/v0.2.1/patches-0.2.1.mpp",
   "signature_download_url": "",
-  "version": "0.2.1-dev.1"
+  "version": "0.2.1"
 }

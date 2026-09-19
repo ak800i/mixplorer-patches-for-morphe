@@ -25,7 +25,7 @@ The generated [patch catalogue](patches-list.json) describes the bundle's patche
 ## Patches
 
 <!-- PATCHES_START -->
-> **[v0.2.1-dev.1](https://github.com/ak800i/mixplorer-patches-for-morphe/releases/tag/v0.2.1-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;1 patch total
+> **[v0.2.1](https://github.com/ak800i/mixplorer-patches-for-morphe/releases/tag/v0.2.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;1 patch total
 <details open>
 <summary>📦 MiXplorer&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
