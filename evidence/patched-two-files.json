@@ -3,7 +3,7 @@
   "type": "text\/*",
   "flags": "0x1b0800c3",
   "referrer": "android-app:\/\/com.mixplorer",
-  "telegramSourceCommit": "9552e5541e1274b9557c9832b204dbfcaf44b3dc",
+  "receiverSourceCommit": "9552e5541e1274b9557c9832b204dbfcaf44b3dc",
   "storagePermission": false,
   "intent": "intent:#Intent;action=android.intent.action.SEND_MULTIPLE;type=text\/*;launchFlags=0x1b0800c3;component=dev.local.shareprobe\/.ShareProbeActivity;end",
   "extraTypes": {
@@ -34,7 +34,7 @@
         "bytes": 101,
         "sha256": "3dd37f611fc1cbc157c69c910d58fbe28f8776ab26fbc2f1d1bee8771727002e"
       },
-      "telegramSingle": {
+      "modeledSingleFileRead": {
         "resolvedDataPath": null,
         "route": "content-uri-to-cache",
         "exists": true,
@@ -45,7 +45,7 @@
         },
         "success": true
       },
-      "telegramMultiple": {
+      "modeledMultiFileRead": {
         "resolvedDataPath": null,
         "route": "content-uri-to-cache",
         "exists": true,
@@ -65,7 +65,7 @@
         "mime_type": "text\/plain"
       },
       "adaptedMimeType": "text\/plain",
-      "telegramMultipleWithoutData": {
+      "modeledMultiFileReadWithoutData": {
         "resolvedDataPath": null,
         "route": "content-uri-to-cache",
         "exists": true,
@@ -94,7 +94,7 @@
         "bytes": 119,
         "sha256": "91a804749e8b51de4a9f0cddbaae20d641c97cb2fb4846823f88456c407029e8"
       },
-      "telegramSingle": {
+      "modeledSingleFileRead": {
         "resolvedDataPath": null,
         "route": "content-uri-to-cache",
         "exists": true,
@@ -105,7 +105,7 @@
         },
         "success": true
       },
-      "telegramMultiple": {
+      "modeledMultiFileRead": {
         "resolvedDataPath": null,
         "route": "content-uri-to-cache",
         "exists": true,
@@ -125,7 +125,7 @@
         "mime_type": "text\/plain"
       },
       "adaptedMimeType": "text\/plain",
-      "telegramMultipleWithoutData": {
+      "modeledMultiFileReadWithoutData": {
         "resolvedDataPath": null,
         "route": "content-uri-to-cache",
         "exists": true,

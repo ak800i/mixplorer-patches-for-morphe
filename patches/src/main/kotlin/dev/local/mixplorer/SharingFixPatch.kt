@@ -27,9 +27,9 @@ internal const val PROVIDER = "Lcom/mixplorer/providers/FileProvider;"
 internal const val CALLER_CHECK = "morpheHideExternalData"
 
 @Suppress("unused")
-val fixTelegramMultiFileSharingPatch = bytecodePatch(
-    name = "Fix Telegram multi-file sharing",
-    description = "Hides unreadable _data filesystem paths from external apps while preserving content URI access and same-app queries.",
+val fixScopedStorageFileSharingPatch = bytecodePatch(
+    name = "Fix scoped-storage file sharing",
+    description = "Hides unreadable _data filesystem paths from external apps for single-file and multi-file shares, preserving content URI access and same-app queries.",
 ) {
     dependsOn(localSigningPatch)
     compatibleWith(

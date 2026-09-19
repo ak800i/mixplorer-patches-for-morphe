@@ -6,7 +6,7 @@ Future entries are maintained by semantic-release. The releases below were publi
 
 - Added stable MiXplorer 6.71.15, ARM64 build 26090422, while retaining beta support.
 - Verified stable startup, native single-file and two-file receiver reads, and same-UID path preservation on Android 13.
-- Live Telegram UI/network uploads remain unverified.
+- Live receiving-app UI/network uploads remain unverified.
 
 ## [0.1.0](https://github.com/ak800i/mixplorer-patches-for-morphe/releases/tag/v0.1.0) (2026-09-18)
 
