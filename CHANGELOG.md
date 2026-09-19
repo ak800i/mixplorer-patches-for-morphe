@@ -1,3 +1,9 @@
+## [0.2.2](https://github.com/ak800i/mixplorer-patches-for-morphe/compare/v0.2.1...v0.2.2) (2026-09-19)
+
+### 🐛 Bug Fixes
+
+* exclude stale test bundles from releases ([2e55df0](https://github.com/ak800i/mixplorer-patches-for-morphe/commit/2e55df06f6e91702e7f81729a9990eee9a526f5d))
+
 ## [0.2.2-dev.1](https://github.com/ak800i/mixplorer-patches-for-morphe/compare/v0.2.1...v0.2.2-dev.1) (2026-09-19)
 
 ### 🐛 Bug Fixes
