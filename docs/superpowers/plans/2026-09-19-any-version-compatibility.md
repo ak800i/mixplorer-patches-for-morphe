@@ -295,11 +295,12 @@ Expected: success and release `v0.2.3-dev.1` with exactly one non-source `.mpp` 
 Identify the single open `dev` to `main` PR, verify its head and base, then merge with a merge commit and without deleting `dev`:
 
 ```powershell
-$prs = @(gh pr list --base main --head dev --state open --json number,baseRefName,headRefName | ConvertFrom-Json)
+$prs = @(gh pr list --base main --head dev --state open --json number,baseRefName,headRefName,headRefOid | ConvertFrom-Json)
 if ($prs.Count -ne 1 -or $prs[0].baseRefName -ne 'main' -or $prs[0].headRefName -ne 'dev') {
     throw 'Expected exactly one dev to main promotion PR'
 }
-gh pr merge $prs[0].number --merge
+if ($prs[0].headRefOid -ne $head) { throw 'Promotion PR head differs from verified prerelease commit' }
+gh pr merge $prs[0].number --merge --match-head-commit $head
 ```
 
 - [ ] **Step 5: Verify stable publication**

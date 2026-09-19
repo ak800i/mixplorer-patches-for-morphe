@@ -29,7 +29,9 @@ class SharingFixPatchTest {
 
     @Test
     fun `supports any stable and beta MiXplorer version on Android 11 or later`() {
-        val supported = fixScopedStorageFileSharingPatch.compatibility.orEmpty().associateBy { it.packageName }
+        val compatibility = fixScopedStorageFileSharingPatch.compatibility.orEmpty()
+        assertEquals(2, compatibility.size)
+        val supported = compatibility.associateBy { it.packageName }
         assertEquals(setOf("com.mixplorer", "com.mixplorer.beta"), supported.keys)
         supported.values.forEach { compatibility ->
             val target = compatibility.targets.single()
