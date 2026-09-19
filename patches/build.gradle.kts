@@ -12,7 +12,11 @@ patches {
     }
 }
 
+val patchListGenerator by sourceSets.creating
+
 dependencies {
+    add(patchListGenerator.implementationConfigurationName, libs.morphe.patcher)
+    add(patchListGenerator.implementationConfigurationName, libs.gson)
     testImplementation(libs.morphe.patcher)
     testImplementation(platform("org.junit:junit-bom:5.13.4"))
     testImplementation(kotlin("test-junit5"))
@@ -21,4 +25,18 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.register<JavaExec>("generatePatchesList") {
+    description = "Generate the community catalogue from the current patch bundle."
+    group = "build"
+    dependsOn("buildAndroid", patchListGenerator.classesTaskName)
+    classpath = patchListGenerator.runtimeClasspath
+    mainClass.set("dev.local.mixplorer.PatchListGeneratorKt")
+
+    val bundle = layout.buildDirectory.file("libs/patches-${project.version}.mpp")
+    val catalogue = rootProject.layout.projectDirectory.file("patches-list.json")
+    inputs.file(bundle)
+    outputs.file(catalogue)
+    args(bundle.get().asFile.absolutePath, catalogue.asFile.absolutePath)
 }

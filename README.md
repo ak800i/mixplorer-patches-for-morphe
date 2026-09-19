@@ -20,6 +20,8 @@ https://github.com/ak800i/mixplorer-patches-for-morphe
 
 For local import, download the `.mpp` from the [latest release](https://github.com/ak800i/mixplorer-patches-for-morphe/releases/latest). The root [source manifest](patches-bundle.json) points Morphe to the published bundle.
 
+The generated [patch catalogue](patches-list.json) describes the bundle's patches and supported app builds for community indexes.
+
 ## Supported input
 
 | Edition | Package | Version | ARM64 build |
@@ -85,9 +87,11 @@ Requires JDK 21+ and authenticated read access to Morphe's GitHub Packages regis
 Or with credentials already configured:
 
 ```shell
-./gradlew :patches:test :patches:buildAndroid
+./gradlew :patches:test :patches:generatePatchesList
 ```
 
-Build output: `patches/build/libs/patches-0.2.0.mpp`. The build does not publish releases or update the source manifest automatically. The project uses Morphe Patcher 1.13.0, the official patches Gradle plugin 1.3.4, and the checksum-pinned Gradle 9.3.1 wrapper.
+Both commands build `patches/build/libs/patches-0.2.0.mpp` and regenerate the root [patches-list.json](patches-list.json) from that exact bundle. The `generatePatchesList` task depends on `buildAndroid`; its exporter and JSON dependency are build-only and are not included in the `.mpp`.
+
+For each release, regenerate and commit [patches-list.json](patches-list.json) together with [patches-bundle.json](patches-bundle.json), with both versions matching the released bundle. Do not edit the catalogue manually. The build does not publish releases or update the source manifest automatically. The project uses Morphe Patcher 1.13.0, the official patches Gradle plugin 1.3.4, and the checksum-pinned Gradle 9.3.1 wrapper.
 
 The optional instrumentation test is built with [device-tests/build.ps1](device-tests/build.ps1), supplying Android Build Tools, an API 33 android.jar, and a standard debug keystore with alias `androiddebugkey` and password `android`. It defaults to stable `com.mixplorer`; pass `-TargetPackage com.mixplorer.beta` for beta. The patched test app must be signed with that same key. It reads only the fixture URI and expected path supplied to `am instrument`.

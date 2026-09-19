@@ -1,4 +1,4 @@
-param([string[]]$Tasks = @(':patches:test', ':patches:buildAndroid'))
+param([string[]]$Tasks = @(':patches:test', ':patches:buildAndroid', ':patches:generatePatchesList'))
 
 $ErrorActionPreference = 'Stop'
 $oldToken = $env:GITHUB_TOKEN
