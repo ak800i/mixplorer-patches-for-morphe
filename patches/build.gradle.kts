@@ -8,11 +8,11 @@ patches {
         source = "https://github.com/ak800i/mixplorer-patches-for-morphe"
         contact = "https://github.com/ak800i/mixplorer-patches-for-morphe/issues"
         website = "https://github.com/ak800i/mixplorer-patches-for-morphe"
-        license = "Not specified"
+        license = "GPLv3"
     }
 }
 
-val patchListGenerator by sourceSets.creating
+val patchListGenerator = sourceSets.create("patchListGenerator")
 
 dependencies {
     add(patchListGenerator.implementationConfigurationName, libs.morphe.patcher)
@@ -39,4 +39,8 @@ tasks.register<JavaExec>("generatePatchesList") {
     inputs.file(bundle)
     outputs.file(catalogue)
     args(bundle.get().asFile.absolutePath, catalogue.asFile.absolutePath)
+}
+
+tasks.named("publish") {
+    dependsOn(tasks.test, "generatePatchesList")
 }

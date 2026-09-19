@@ -4,7 +4,7 @@ A Morphe patch bundle that fixes the reproduced multi-file sharing failure by re
 
 This independent project is not affiliated with MiXplorer or Morphe. No modified MiXplorer APK is distributed.
 
-Use release **0.2.0** for stable and beta MiXplorer.
+Release **0.2.0 and later** supports stable and beta MiXplorer.
 
 ## Add to Morphe
 
@@ -21,6 +21,42 @@ https://github.com/ak800i/mixplorer-patches-for-morphe
 For local import, download the `.mpp` from the [latest release](https://github.com/ak800i/mixplorer-patches-for-morphe/releases/latest). The root [source manifest](patches-bundle.json) points Morphe to the published bundle.
 
 The generated [patch catalogue](patches-list.json) describes the bundle's patches and supported app builds for community indexes.
+
+## Patches
+
+<!-- PATCHES_START -->
+> **[v0.2.0](https://github.com/ak800i/mixplorer-patches-for-morphe/releases/tag/v0.2.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;1 patch total
+<details open>
+<summary>📦 MiXplorer&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**🎯 Supported versions:**
+
+| 6.71.15 |
+| :---: |
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Fix Telegram multi-file sharing](#fix-telegram-multi-file-sharing) | Hides unreadable _data filesystem paths from external apps while preserving content URI access and same-app queries. |  |
+
+</details>
+
+<details open>
+<summary>📦 MiXplorer Beta&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**🎯 Supported versions:**
+
+| 6.71.15-BETA |
+| :---: |
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Fix Telegram multi-file sharing](#fix-telegram-multi-file-sharing) | Hides unreadable _data filesystem paths from external apps while preserving content URI access and same-app queries. |  |
+
+</details>
+
+<!-- PATCHES_END -->
 
 ## Supported input
 
@@ -48,7 +84,7 @@ Use [Morphe Desktop 1.16.0](https://github.com/MorpheApp/morphe-desktop/releases
 
 **Back up before replacing an existing installation.** Export MiXplorer settings using Settings > More settings > Export, and keep anything important outside its app-private storage. Android will not install a re-signed APK over the officially signed version of the same package (`com.mixplorer` or `com.mixplorer.beta`). After verifying the backup, remove only that edition if it is already installed, install the patched APK, and restore settings. Other editions use different package names and can remain installed. Keep your Morphe signing key for subsequent patched updates; returning to the official app also requires a backup and reinstall.
 
-CLI equivalent, from a folder containing the three named input files:
+CLI example for release 0.2.0, from a folder containing the three named input files (later automated releases use `patches-<version>.mpp`):
 
 ```powershell
 java -jar .\morphe-desktop-1.16.0-all.jar patch .\MiXplorer_v6.71.15_B26090422-arm64.apk -p .\MiXplorer-Sharing-Fix-0.2.0.mpp --exclusive -e "Fix Telegram multi-file sharing" -o .\MiXplorer-patched.apk
@@ -57,6 +93,8 @@ java -jar .\morphe-desktop-1.16.0-all.jar patch .\MiXplorer_v6.71.15_B26090422-a
 The source manifest advertises the released patch bundle. It does not expand compatibility beyond the supported input listed above.
 
 ## What changes
+
+### Fix Telegram multi-file sharing
 
 - **Provider fix:** A small UID check is inserted into `FileProvider.query()`'s `_data` branch. Different UID: store a null value and follow the original column continuation. Same UID: follow the original path branch. Explicit `_data` projections are covered, and the separate `path` alias is untouched.
 - **Required signing support:** Both supported APKs contain the same guarded self-fingerprint helper, which calculates the signing certificate's CRC-32 and checks an allowed list. An unchanged, re-signed beta was verified to exit at startup. The internal dependency adds the actual installed app's fingerprint to the existing list. It does not fabricate a developer signature or change Android's signature verification. Only the free stable and beta editions are targeted.
@@ -90,8 +128,25 @@ Or with credentials already configured:
 ./gradlew :patches:test :patches:generatePatchesList
 ```
 
-Both commands build `patches/build/libs/patches-0.2.0.mpp` and regenerate the root [patches-list.json](patches-list.json) from that exact bundle. The `generatePatchesList` task depends on `buildAndroid`; its exporter and JSON dependency are build-only and are not included in the `.mpp`.
+Both commands build `patches/build/libs/patches-<version>.mpp` and regenerate the root [patches-list.json](patches-list.json) from that exact bundle. The `generatePatchesList` task depends on `buildAndroid`; its exporter and JSON dependency are build-only and are not included in the `.mpp`. The `publish` task also requires the patch tests and catalogue generation.
 
-For each release, regenerate and commit [patches-list.json](patches-list.json) together with [patches-bundle.json](patches-bundle.json), with both versions matching the released bundle. Do not edit the catalogue manually. The build does not publish releases or update the source manifest automatically. The project uses Morphe Patcher 1.13.0, the official patches Gradle plugin 1.3.4, and the checksum-pinned Gradle 9.3.1 wrapper.
+Local builds do not publish releases or update the source manifest. The project uses Morphe Patcher 1.13.0, the official patches Gradle plugin 1.3.4, and the checksum-pinned Gradle 9.7.1 wrapper.
 
 The optional instrumentation test is built with [device-tests/build.ps1](device-tests/build.ps1), supplying Android Build Tools, an API 33 android.jar, and a standard debug keystore with alias `androiddebugkey` and password `android`. It defaults to stable `com.mixplorer`; pass `-TargetPackage com.mixplorer.beta` for beta. The patched test app must be signed with that same key. It reads only the fixture URI and expected path supplied to `am instrument`.
+
+## Development and releases
+
+Release tooling follows the [official Morphe template](https://github.com/MorpheApp/morphe-patches-template/tree/f99b2938bd25b202a6185a774d487a07d1061915). Node.js 24.15+ is required for the locked npm dependencies; CI uses Node 24 and JDK 21. Install release dependencies with `npm ci`.
+
+- Make development changes on `dev`. Conventional `feat`, `fix`, `bump`, and `perf` commits produce automated prereleases; ordinary `chore`, `docs`, and `build` commits do not. `build(Needs bump)` explicitly requests a patch release.
+- The [release workflow](.github/workflows/release.yml) runs the patch tests before semantic-release. It generates versions, release notes, the bundle manifest, the catalogue, and this README's patch section, then commits and publishes them together. New release bundles receive GitHub build-provenance attestations.
+- The [promotion workflow](.github/workflows/open_pull_request.yml) opens a `dev` to `main` pull request. Merge it without squashing or rebasing to publish a stable release. Release metadata is back-merged to `dev` automatically.
+- Do not manually edit generated catalogue/release metadata, manually upload replacement releases, or force-push release commits. To correct a released bundle, publish a new version through the workflow.
+
+GitHub Actions needs the workflow's declared permissions and **Settings > Actions > General > Allow GitHub Actions to create and approve pull requests** enabled. The existing 0.1.0 and 0.2.0 releases predate this automation and remain unchanged; their historical assets do not gain CI provenance retroactively.
+
+The build-only catalogue exporter, Windows build helper, regression tests, device instrumentation, and evidence are intentional additions to the template. No unused example patches or extension module are included. Dependency-lock security updates are kept within the template's declared version ranges.
+
+## License
+
+MiXplorer Sharing Fix is licensed under [GPLv3](LICENSE). The upstream [naming notice](NOTICE) is included. MiXplorer itself is a separate product and is not redistributed here.
